@@ -1,0 +1,119 @@
+
+body {
+  font-family: Verdana;
+}
+
+/****************************************************************************
+Styles for the Structural Blocks
+****************************************************************************/
+
+#page_wrapper {
+  width:1000px;
+  margin:auto;
+}
+
+header {
+  height:100px;
+  border: 1px #aeaeae solid;
+  text-align: center;
+  font-family: "Trebuchet MS";
+  color: white;
+  background-color: #01274b;
+}
+
+main {
+  min-height:500px;
+  border: 1px #aeaeae solid;
+  color: white;
+  background-color: #1e1759;
+}
+
+footer {
+  height:100px;
+  border: 1px #aeaeae solid;
+  text-align: center;
+  font-family: Tahoma;
+  background-color: #01274b;
+  color: white;
+}
+
+/****************************************************************************
+Styles for the columns
+****************************************************************************/
+
+.column {
+  float: left;
+  /*border: 1px #000 solid;*/
+  text-align: center;
+  width: 50%;
+  
+}
+
+.column_L {
+  float: left;
+  /*border: 1px #000 solid;*/
+  text-align: left;
+  width: 50%;
+}
+
+.column_R {
+  float: left;
+  /*border: 1px #000 solid;*/
+  text-align: right;
+  width: 50%;
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/****************************************************************************
+Styles for the table + links
+****************************************************************************/
+
+table {
+  margin: 0px auto;
+}
+
+th, td {
+  border: 1px #aeaeae solid;
+}
+
+td {
+  padding: 10px;
+}
+
+a {
+  color: white;
+}
+
+/****************************************************************************
+Styles for the Nav Bar
+****************************************************************************/
+
+ul.navbar {
+  list-style-type: none;
+  border: 1px #aeaeae solid;
+  text-align: center;
+  padding: 0;
+}
+
+ul.navbar li {
+  text-align: center;
+  margin: 0px 0px 0px 2px;  /*T R B L*/
+  display: inline-block;
+}
+
+ul.navbar a {
+  display:block;
+  text-decoration:none;
+  background-color:#413297;
+  padding: 2px;
+}
+
+ul.navbar a:hover {
+  background-color:#6a53f0;
+}
+
