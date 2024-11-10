@@ -9,12 +9,17 @@ var endCont = null;
 
 var instrText = null;
 
+var startButton = null;
+
 document.addEventListener("DOMContentLoaded", function() {
     menuTextCont = document.getElementById("menuTextContainer");
     gridCont = document.getElementById("gridContainer");
     endCont = document.getElementById("endContainer");
     
     instrText = document.createTextNode(instructions);
+
+    startB = document.getElementById("startBut");
+    startB.addEventListener("click", startGame);
 
 })
 
