@@ -20,6 +20,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function startGame() {
     //changes menu text to game instructions, display lives, maybe say grid size
+    console.log("works");
+
     menuTextCont.replaceChild(instrText, menuTextCont.childNodes[1]);
 
     let gridSize = document.getElementById("gridSize");
