@@ -21,6 +21,8 @@ document.addEventListener("DOMContentLoaded", function() {
     startB = document.getElementById("startBut");
     startB.addEventListener("click", startGame);
 
+    console.log("dom loaded");
+
 })
 
 function startGame() {
