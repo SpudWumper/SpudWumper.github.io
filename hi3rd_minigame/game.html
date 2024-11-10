@@ -27,9 +27,20 @@
  and display a replay button to send them back to grid size/diff. selection-->
 
   <div id="menuTextContainer">
-    <p class="generalText">
+    <div id="generalText">
       This is my attempt at remaking a minigame from a Honkai Impact 3rd limited time event.
-    </p>
+    </div>
+    <div id="mainText">
+      <br><br>
+
+      Choose a grid size: <input type="number" id="gridSize" value="">
+      Choose how many lives you have (i.e. number of fails allowed): <input type="number" id="failNum" value="">
+
+      <br>
+
+      <input type="button" value="Start" onclick="startGame()">
+    </div>
+    
   </div>
 
   <div id="gridContainer">
