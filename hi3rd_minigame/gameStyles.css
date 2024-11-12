@@ -1,8 +1,42 @@
 
 body {
   font-family: Verdana;
+  font-size: 15px;
+} 
+
+table.grid {
+  border-collapse: separate;
+  position: relative;
 }
 
-div.tiles {
-  
+td.grid, tr.grid {
+  padding: 25px;
+}
+
+th.gridC {
+  position: sticky;
+  top: 0;
+  border: 1px solid black;
+  background-color: white;
+  padding: 25px;
+}
+
+/* try to get row headers to stick when horizontally scrolling */
+th.gridR {
+  /* position: sticky; */
+  top: 0;
+  border: 1px solid black;
+  padding: 25px;
+  white-space: nowrap;
+}
+
+div.tiles { /*position, top, left, width, and height may be dynamically set depending on grid size, for now fixed*/
+  width: 50px;
+  height: 50px;
+  margin: auto;
+  background-color: #3c3c3c;
+}
+
+div.tiles:hover {
+  background-color: rgb(120, 120, 120);
 }

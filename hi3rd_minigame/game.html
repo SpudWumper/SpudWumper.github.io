@@ -10,8 +10,9 @@
 
     <meta name="description" content="that minigame from the event">
 
-
+    <link rel="stylesheet" type="text/css" href="gameStyles.css">
     
+    <!-- script after <body> -->
 
 </head>
 <body>
@@ -24,24 +25,17 @@
   end button if user wants to end early/go back to choose difficulty/grid size
  if user loses all lives/wins, freeze the grid/make it un-interactable
  and then display appropiate message
- and display a replay button to send them back to grid size/diff. selection-->
+ and display a replay button to send them back to grid size/diff. selection
+ 
+ could do some simple animations when we're replacing text, or creating grid, etc-->
+
+ <div id="generalText">
+  This is my attempt at remaking a minigame from a Honkai Impact 3rd limited time event.
+  <hr>
+ </div>
 
   <div id="menuTextContainer">
-    <div id="generalText">
-      This is my attempt at remaking a minigame from a Honkai Impact 3rd limited time event.
-    </div>
-    <div id="mainText">
-      <br><br>
 
-      Choose a grid size: <input type="number" id="gridSize" value=""> <!-- limit this to positive integers, maybe no more than 10? -->
-      <br>
-      Choose how many lives you have (i.e. number of fails allowed): <input type="number" id="failNum" value=""> <!-- least is 0, max maybe 3 or 5 -->
-
-      <br>
-
-      <input type="button" id ="startBut" value="Start">
-    </div>
-    
   </div>
 
   <div id="gridContainer">
