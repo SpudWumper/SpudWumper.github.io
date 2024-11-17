@@ -34,9 +34,9 @@ div.tiles { /*position, top, left, width, and height may be dynamically set depe
   width: 50px;
   height: 50px;
   margin: auto;
-  background-color: #3c3c3c;
+  background-color: #7c7c7c;
 }
 
 div.tiles:hover {
-  background-color: rgb(120, 120, 120);
+  background-color: rgb(155, 155, 155);
 }

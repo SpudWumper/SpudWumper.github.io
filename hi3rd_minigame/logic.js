@@ -23,6 +23,10 @@ var instrText = null;
 var grid = 0;
 var fails = 0;
 
+//keep track of game state so we can check when they have won
+var finishedR = 0;
+var finishedC = 0;
+
 document.addEventListener("DOMContentLoaded", function() {
     //everything below is just setting up the initial menu screen
     menuTextCont = document.getElementById("menuTextContainer");
@@ -81,6 +85,10 @@ function menu() {
 // - displays grid size and number of lives/fails left
 // - end game button in case player wants to go back/restart
 function startGame() {
+    finishedR = 0;
+    finishedC = 0;
+
+    //grab grid size and fails to keep track globally
     let gridSize = document.getElementById("gridSize").value;
     grid = gridSize;
     let failNum = document.getElementById("failNum").value;
@@ -92,7 +100,7 @@ function startGame() {
         return;
     }
     if(failNum < 0 || failNum > 3) {
-        alert("Can only have 0, 1, 2, or 3 lives");
+        alert("Can only have 0, 1, 2, or 3 fails allowed");
         return;
     }
 
@@ -107,7 +115,7 @@ function startGame() {
     menuTextCont.appendChild(document.createElement("br"));
 
     let gs = document.createTextNode("Grid size: " + gridSize);
-    var fn = document.createTextNode("Fails made: " + failNum);
+    let fn = document.createTextNode("Fails allowed: " + failNum);
 
     menuTextCont.appendChild(gs);
     menuTextCont.appendChild(document.createElement("br"));
@@ -118,6 +126,7 @@ function startGame() {
 
     // - use a table to hold the grid + clues
     let gridT = document.createElement("table");
+    gridT.id = "gridTable";
     gridT.className = "grid";
     let r = document.createElement("tr");
     r.className = "grid";
@@ -185,21 +194,41 @@ function startGame() {
                 }
             }
 
+            // if we hit end of row, save the count as string
+            // - if no good tiles, increment finished rows (0 row is technically already done), and disable the row
             if (cCount == grid) { //check if in last column
                 if (rowCount != 0) {
-                    clueR += rowCount + " ";
+                    clueR += rowCount + "";
                 }
                 else if (clueR == "") {
                     clueR += "0";
+
+                    for (let k = 1; k <= grid; k++) {
+                        y.parentElement.childNodes[k].firstChild.style.backgroundColor = "rgb(45, 45, 45)";
+                        y.parentElement.childNodes[k].firstChild.removeEventListener("click", check);
+                    }
+
+                    finishedR++;
                 }
             }
 
+            // if we hit end of col, save the count as string
+            // - if no good tiles, increment finished columns (0 col is technically already done), and disable the col
             if (rCount == grid) { //check if in last row
                 if (col[cCount-1] != 0) {
-                    clueCA[cCount-1] += col[cCount-1] + " ";
+                    clueCA[cCount-1] += col[cCount-1] + "";
                 }
                 else if (clueCA[cCount-1] == "") {
                     clueCA[cCount-1] += "0";
+
+                    let column = y.cellIndex;
+                    let g = y.parentElement.parentElement;
+                    for (let k = 1; k <= grid; k++) {
+                        g.childNodes[k].childNodes[column].firstChild.style.backgroundColor = "rgb(45, 45, 45)";
+                        g.childNodes[k].childNodes[column].firstChild.removeEventListener("click", check);
+                    }
+
+                    finishedC++;
                 }
             }
 
@@ -219,19 +248,36 @@ function startGame() {
         x1++;
     }
 
-    //make an end game button - if they press it, add some stuff to end cont? freeze the grid?
+    //end game early button
     endCont.appendChild(document.createElement("br"));
     endCont.appendChild(document.createElement("br"));
 
     let endButton = document.createElement("button");
     endButton.innerHTML = "End game";
     endButton.id = "endBut";
-    endButton.addEventListener("click", endGame);
+    endButton.addEventListener("click", manuelEnd);
     endCont.appendChild(endButton);
+
+    //this checks a very extreme case where every row and column is 0 on generation, so technically done, more common if grid is small, like 2x2
+    if (finishedR == grid && finishedC == grid) {
+        endCont.removeChild(endCont.lastChild);
+
+        let endText = document.createTextNode("Congratulations, you won.");
+        //will also eventually show them how many coins/points/whatever they got from the game
+        endCont.appendChild(endText);
+
+        endCont.appendChild(document.createElement("br"));
+
+        let playAgainButton = document.createElement("button");
+        playAgainButton.innerHTML = "Back to game settings selection";
+        playAgainButton.id = "playAgainBut";
+        playAgainButton.addEventListener("click", menu);
+        endCont.appendChild(playAgainButton);
+    }
 }
 
 //small function to ask player and confirm end game
-function endGame() {
+function manuelEnd() {
     let end = confirm("Are you sure you want to end the game early?");
 
     if (end) {
@@ -239,18 +285,148 @@ function endGame() {
     }
 }
 
+// runs every time a tile is clicked
+// - event: to let us grab the tile that was clicked
+// if tile good, color accordingly and check if all good tiles have been clicked in corresponding row + column
+// if all clicked, color accordingly and disable corresponding tiles
+// and keep track of how many rows + cols finished
+// otherwise, if bad, color accordingly and check if any fails still left
+// if no more fails allowed, end game, freeze grid, and show good and bad
+// if still more fails, keep playing, and decrement fails left
+// and finally check if player has won, if so, do stuff
 function check(event) {
     //if tile has good attribute, highlight it with temp color, like blue
     //if not good, change color to red and remove event listener
     let tile = event.target;
+    tile.setAttribute("data-clicked", "true");
     
     if(tile.getAttribute("data-tile") == "good") {
         tile.style.backgroundColor = "rgb(66, 167, 245)";
-        //detecting if a section has been completely selected will be difficult...
+
+        let row = tile.parentElement.closest('tr').rowIndex;
+        let col = tile.parentElement.cellIndex;
+
+
+        let g = document.getElementById('gridTable');
+        let rcount = 0;
+        let ccount = 0;
+
+        for (let i = 1; i <= grid; i++) {
+            if (g.childNodes[row].childNodes[i].firstChild.getAttribute("data-clicked") == "true" && g.childNodes[row].childNodes[i].firstChild.getAttribute("data-tile") == "good") {
+                rcount++;
+            }
+        }
+        for (let j = 1; j <= grid; j++) {
+            if (g.childNodes[j].childNodes[col].firstChild.getAttribute("data-clicked") == "true" && g.childNodes[j].childNodes[col].firstChild.getAttribute("data-tile") == "good") {
+                ccount++;
+            }
+        }
+        
+        //getting sum of clue numbers
+        let rlist = g.childNodes[row].childNodes[0].innerHTML.match(/\d+/g);
+        let r = 0;
+        for (let i = 0; i < rlist.length; i++) {
+            r += parseInt(rlist[i], 10);
+        }
+
+        let clist = g.childNodes[0].childNodes[col].innerHTML.match(/\d+/g);
+        let c = 0;
+        for (let i = 0; i < clist.length; i++) {
+            c += parseInt(clist[i], 10);
+        }
+
+        if (r == rcount) {
+            for (let i = 1; i <= grid; i++) {
+                if (g.childNodes[row].childNodes[i].firstChild.getAttribute("data-tile") == "good") {
+                    g.childNodes[row].childNodes[i].firstChild.style.backgroundColor = "green";
+                }
+                else {
+                    if (g.childNodes[row].childNodes[i].firstChild.style.backgroundColor != "rgb(176, 35, 35)") {
+                        g.childNodes[row].childNodes[i].firstChild.style.backgroundColor = "rgb(45, 45, 45)";
+                    }
+                    g.childNodes[row].childNodes[i].firstChild.removeEventListener("click", check);
+                }
+            }
+            finishedR++;
+        }
+        if (c == ccount) {
+            for (let j = 1; j <= grid; j++) {
+                if (g.childNodes[j].childNodes[col].firstChild.getAttribute("data-tile") == "good") {
+                    g.childNodes[j].childNodes[col].firstChild.style.backgroundColor = "green";
+                }
+                else {
+                    if (g.childNodes[j].childNodes[col].firstChild.style.backgroundColor != "rgb(176, 35, 35)") {
+                        g.childNodes[j].childNodes[col].firstChild.style.backgroundColor = "rgb(45, 45, 45)";
+                    }
+                    g.childNodes[j].childNodes[col].firstChild.removeEventListener("click", check);
+                }
+            }
+            finishedC++;
+        }
     }
     else {
         tile.style.backgroundColor = "rgb(176, 35, 35)";
-        //update fails counter
+        fails--;
+        let fn = document.createTextNode("Fails allowed: " + fails);
+
+        if (fails < 0) {
+            fn = document.createTextNode("Fails allowed: 0");
+            //freeze grid? and put stuff in end container, make a replay button
+            let rows = Array.from(document.getElementById("gridTable").childNodes);
+            rows.shift(); // so we don't loop over clue cells
+
+            for (let x of rows) { //loop over rows
+                let columns = Array.from(x.childNodes); //grab array of cells in this row
+                columns.shift(); // remove clue cell 
+        
+                for (let y of columns) { //loop over each cell in row (looping over columns)
+                    let t = y.childNodes[0];
+                    t.removeEventListener("click", check);
+
+                    //if (t.getAttribute("data-clicked") != "true") {
+                        if (t.getAttribute("data-tile") == "good") {
+                            t.style.backgroundColor = "rgb(66, 245, 126)";
+                        }
+                        else {
+                            t.style.backgroundColor = "rgb(176, 35, 35)";
+                        }
+                    //}
+                }
+            }
+
+            endCont.removeChild(endCont.lastChild);
+
+            let endText = document.createTextNode("You made too many mistakes."); //tell user how many mistakes they made
+            //will also eventually show them how many coins/points/whatever they got from the game
+            endCont.appendChild(endText);
+
+            endCont.appendChild(document.createElement("br"));
+
+            let tryAgainButton = document.createElement("button");
+            tryAgainButton.innerHTML = "Back to game settings selection";
+            tryAgainButton.id = "tryAgainBut";
+            tryAgainButton.addEventListener("click", menu);
+            endCont.appendChild(tryAgainButton);
+        }
+
+        menuTextCont.removeChild(menuTextCont.lastChild);
+        menuTextCont.appendChild(fn);
+    }
+
+    if (finishedR == grid && finishedC == grid) {
+        endCont.removeChild(endCont.lastChild);
+
+        let endText = document.createTextNode("Congratulations, you won.");
+        //will also eventually show them how many coins/points/whatever they got from the game
+        endCont.appendChild(endText);
+
+        endCont.appendChild(document.createElement("br"));
+
+        let playAgainButton = document.createElement("button");
+        playAgainButton.innerHTML = "Back to game settings selection";
+        playAgainButton.id = "playAgainBut";
+        playAgainButton.addEventListener("click", menu);
+        endCont.appendChild(playAgainButton);
     }
 }
 
@@ -272,7 +448,6 @@ function insertRow(parent) {
         let z = Math.floor(Math.random() * 2);
         if (z == 1) {
             tile.setAttribute("data-tile", "good");
-            //tile.style.backgroundColor = "green";
         }
         
         cell.appendChild(tile);
