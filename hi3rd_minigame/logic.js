@@ -64,9 +64,9 @@ function menu() {
     let failInput = document.createElement("input");
     failInput.setAttribute("type", "number");
     failInput.id = "failNum";
-    failInput.value = "0";
+    failInput.value = "1";
     l = document.createElement("label");
-    l.textContent = "Choose how many lives you have (i.e. number of fails allowed) 0 - 3: ";
+    l.textContent = "Choose how many lives you have (i.e. number of fails allowed) 1 - 3: ";
     menuTextCont.appendChild(l);
     menuTextCont.appendChild(failInput);
 
@@ -85,6 +85,8 @@ function menu() {
 // - displays grid size and number of lives/fails left
 // - end game button in case player wants to go back/restart
 function startGame() {
+    
+
     finishedR = 0;
     finishedC = 0;
 
@@ -99,8 +101,8 @@ function startGame() {
         alert("Grid size must be at least 2, max 20 (2 by 2)");
         return;
     }
-    if(failNum < 0 || failNum > 3) {
-        alert("Can only have 0, 1, 2, or 3 fails allowed");
+    if(failNum <= 0 || failNum > 3) {
+        alert("Can only have 1, 2, or 3 fails allowed");
         return;
     }
 
@@ -274,6 +276,32 @@ function startGame() {
         playAgainButton.addEventListener("click", menu);
         endCont.appendChild(playAgainButton);
     }
+
+    fadeIn(gridT);
+}
+
+function fadeIn(element) {
+    setInterval( function () {
+        if (Number(element.style.opacity) < 1) {
+            let opac = Number(element.style.opacity) + 0.01
+            element.style.opacity = opac;
+        }
+        else {
+            clearInterval();
+        }
+    }, 10);
+}
+
+function fadeOut(element) {
+    setInterval( function () {
+        if (Number(element.style.opacity) > 0) {
+            let opac = Number(element.style.opacity) - 0.01
+            element.style.opacity = opac;
+        }
+        else {
+            clearInterval();
+        }
+    }, 10);
 }
 
 //small function to ask player and confirm end game
@@ -369,7 +397,7 @@ function check(event) {
         fails--;
         let fn = document.createTextNode("Fails allowed: " + fails);
 
-        if (fails < 0) {
+        if (fails <= 0) {
             fn = document.createTextNode("Fails allowed: 0");
             //freeze grid? and put stuff in end container, make a replay button
             let rows = Array.from(document.getElementById("gridTable").childNodes);

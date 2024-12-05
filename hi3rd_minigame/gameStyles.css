@@ -7,6 +7,8 @@ body {
 table.grid {
   border-collapse: separate;
   position: relative;
+
+  opacity: 0;
 }
 
 td.grid, tr.grid {
